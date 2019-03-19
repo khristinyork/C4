@@ -1,0 +1,79 @@
+package test
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.regex.Pattern
+
+import scala.util.matching.Regex
+// Create a type for the data instead of using a map.
+case class Timestamp(year: Int, month: Int, day: Int, hour: Int, minutes: Int)
+
+object testFecha {
+
+
+
+  // Use triple quotes to avoid extra escaping.
+  // Don't capture parts that you will not use.
+  // Add .* at the end to account for milliseconds and timezone.
+  val reg: Regex = """(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{9})Z""".r
+
+
+  // Instead of empty strings, use Option to represent a value that can be missing.
+  // Convert to Int after parsing.
+//  def dataExtraction(str: String): Boolean = str match {
+//    case reg(y, m, d, h, min) =>  Try(Some(Timestamp(y.toInt, m.toInt, d.toInt, h.toInt, min.toInt))).isSuccess
+//    case _                    => false
+//  }
+//  def dataExtraction(str: String): Boolean = str match {
+//    case reg(y, m, d, h, min,sq,msq) =>
+//      println("hola1")
+//      val dt = Timestamp(y.toInt,m.toInt,d.toInt,h.toInt,min.toInt, sq.toInt, msq.toInt)
+//      println(dt)
+//      Try(new DateTime(y.toInt,m.toInt,d.toInt,h.toInt,min.toInt, sq.toInt, msq.toInt)).isSuccess
+//    case _                    => println("hola")
+//      false
+//  }
+
+  def dateOk(y:Int,m:Int,d:Int,h:Int,min:Int): Calendar={
+    val c=Calendar.getInstance
+    c.set(y,m,d,h,min)
+    println(c.getTime.toString)
+    c
+  }
+
+//
+//  final val FORMAT_TIMESTAMP_SECONDS: String = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'"
+//  val DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{9}Z")
+
+
+  final val FORMAT_TIMESTAMP_SECONDS: String = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
+  val DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")
+
+  def getValidDate(fecha: String): Boolean = DATE_PATTERN.matcher(fecha).matches() && isValid(fecha)
+
+  def isValid(fecha: String): Boolean = {
+    val sdf =
+      new SimpleDateFormat(FORMAT_TIMESTAMP_SECONDS)
+    try {
+      sdf.parse(fecha)
+      true
+    } catch {
+      case e: Exception =>
+        false
+
+    }
+  }
+
+
+  def main(args:Array[String]):Unit={
+    // It works!
+    //    reg.findFirstMatchIn("2018-23-22T19:10:53.094234Z") match{
+    //      case Some(_)=>println("machea")
+    //      case _ => println("no machea")
+    //    }
+
+
+    println(getValidDate("2018-03-22T19:10:53.455123111"))  // => Some(Timestamp(2018,8,22,19,10))
+  }
+
+
+}
